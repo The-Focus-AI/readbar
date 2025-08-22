@@ -1,1 +1,51 @@
-node_modules/
+# Readbar - macOS Menubar PDF/EPUB File Tracker
+# .gitignore file
+
+# Build artifacts
+readbar
+*.o
+*.dSYM/
+
+# Temporary files
+/tmp/readbar_debug.txt
+/tmp/readbar_output.log
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Xcode files (if opened in Xcode)
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM
+*.swiftpm/
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+Package.pins
+Package.resolved
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+crash.log
+
+# User-specific files
+.user
+.local
