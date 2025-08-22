@@ -13,39 +13,30 @@ A macOS menubar application that monitors your Downloads, Desktop, and iCloud re
   - `~/Downloads`
   - `~/Desktop` 
   - `~/Library/Mobile Documents/com~apple~CloudDocs/reading`
+- **Smart date sorting** - Uses last accessed times for reading directory, last modified times for Downloads/Desktop
 
-## Installation
+## Installation & Usage
 
-### Using Make (Recommended)
+### Quick Start
 
 ```bash
+# Clone the repository
 git clone <repository-url>
 cd readbar
-make install
+
+# Run the application
+swift readbar.swift
 ```
 
-This will compile the application and install it to `/usr/local/bin/readbar`.
+### Debug Mode
 
-### Manual Installation
+To see detailed logging information, run with the debug flag:
 
 ```bash
-swiftc -o readbar readbar.swift -framework Cocoa -framework Foundation -framework CoreServices
-sudo cp readbar /usr/local/bin/
+swift readbar.swift --debug
 ```
 
-## Usage
-
-### Starting Readbar
-
-After installation, start Readbar from the terminal:
-
-```bash
-readbar
-```
-
-Or add it to your login items for automatic startup.
-
-### Using the Interface
+## Using the Interface
 
 1. **Menubar Icon** - Look for the document icon in your menubar
 2. **Click the Icon** - Opens a dropdown showing your 15 most recent PDF/EPUB files
@@ -66,7 +57,7 @@ Readbar automatically scans these directories for PDF and EPUB files:
 
 - macOS 10.15+ (Catalina or later)
 - Swift 5.0+
-- Xcode Command Line Tools (for compilation)
+- Xcode Command Line Tools (for Swift compilation)
 
 ### File Monitoring
 
@@ -84,24 +75,23 @@ Readbar automatically scans these directories for PDF and EPUB files:
 
 ## Development
 
-### Building from Source
+### Running from Source
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd readbar
 
-# Build the application
-make build
-
 # Run locally for testing
-./readbar
+swift readbar.swift
+
+# Run with debug output
+swift readbar.swift --debug
 ```
 
 ### Project Structure
 
 - `readbar.swift` - Main application source code
-- `Makefile` - Build and installation automation
 - `README.md` - This documentation
 
 ### Architecture
@@ -132,7 +122,7 @@ The application consists of four main components:
 
 ### Logs and Debugging
 
-Readbar includes comprehensive logging. When running from terminal, you'll see detailed information about:
+Readbar includes comprehensive logging. When running with `--debug`, you'll see detailed information about:
 - File scanning progress
 - Menu updates
 - File opening attempts
@@ -155,3 +145,5 @@ Contributions welcome! Please feel free to submit issues, feature requests, or p
 - Menubar interface with 15 recent files
 - Multi-directory monitoring
 - One-click file opening
+- Smart date sorting (accessed times for reading directory, modified times for others)
+- Debug mode support
