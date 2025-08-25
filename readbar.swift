@@ -293,24 +293,100 @@ class MenuManager: NSObject {
         let fileName = fileURL.lastPathComponent
         print("📖 Opening file: \(fileName)")
         
-        debugPrint("LOG-CLICK-012: About to dispatch to background queue")
-        DispatchQueue.global(qos: .userInitiated).async {
-            debugPrint("LOG-CLICK-013: NOW ON BACKGROUND THREAD")
-            debugPrint("LOG-CLICK-014: About to call NSWorkspace.shared.open")
-            let success = NSWorkspace.shared.open(fileURL)
-            debugPrint("LOG-CLICK-015: NSWorkspace.open returned: \(success)")
-            
-            debugPrint("LOG-CLICK-016: About to dispatch back to main thread")
-            DispatchQueue.main.async {
-                debugPrint("LOG-CLICK-017: Back on main thread")
-                debugPrint("LOG-CLICK-018: File open result: \(success)")
-                debugPrint("LOG-CLICK-019: About to finish main thread callback")
+        // Check if option key is pressed
+        let optionKeyPressed = NSEvent.modifierFlags.contains(.option)
+        
+        if optionKeyPressed && (fileURL.pathExtension.lowercased() == "pdf" || fileURL.pathExtension.lowercased() == "epub") {
+            // Send to ChatGPT
+            sendToChatGPT(fileURL: fileURL)
+        } else {
+            // Normal file opening behavior
+            debugPrint("LOG-CLICK-012: About to dispatch to background queue")
+            DispatchQueue.global(qos: .userInitiated).async {
+                debugPrint("LOG-CLICK-013: NOW ON BACKGROUND THREAD")
+                debugPrint("LOG-CLICK-014: About to call NSWorkspace.shared.open")
+                let success = NSWorkspace.shared.open(fileURL)
+                debugPrint("LOG-CLICK-015: NSWorkspace.open returned: \(success)")
+                
+                debugPrint("LOG-CLICK-016: About to dispatch back to main thread")
+                DispatchQueue.main.async {
+                    debugPrint("LOG-CLICK-017: Back on main thread")
+                    debugPrint("LOG-CLICK-018: File open result: \(success)")
+                    debugPrint("LOG-CLICK-019: About to finish main thread callback")
+                }
+                debugPrint("LOG-CLICK-020: Background thread callback finishing")
             }
-            debugPrint("LOG-CLICK-020: Background thread callback finishing")
         }
         
         debugPrint("LOG-CLICK-021: About to return from openFileAtIndex")
         debugPrint("LOG-CLICK-022: openFileAtIndex method EXITING")
+    }
+    
+    private func sendToChatGPT(fileURL: URL) {
+        print("🤖 Sending \(fileURL.pathExtension.uppercased()) to ChatGPT: \(fileURL.lastPathComponent)")
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Step 1: Activate ChatGPT
+            let activateScript = """
+            tell application "ChatGPT"
+                activate
+                delay 1
+            end tell
+            """
+            
+            // Step 2: Create new chat (Cmd+N)
+            let newChatScript = """
+            tell application "System Events"
+                tell process "ChatGPT"
+                    repeat until frontmost is true
+                        delay 0.2
+                    end repeat
+                    delay 0.5
+                    key code 45 using {command down}
+                    delay 1
+                end tell
+            end tell
+            """
+            
+            // Step 3: Open the file directly
+            let escapedPath = fileURL.path.replacingOccurrences(of: "\"", with: "\\\"")
+            let openFileScript = "do shell script \"open -a \\\"ChatGPT\\\" \\\"\(escapedPath)\"\""
+            
+            // Combine all steps
+            let fullScript = activateScript + "\n" + newChatScript + "\n" + openFileScript
+            
+            let task = Process()
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", fullScript]
+            
+            do {
+                try task.run()
+                task.waitUntilExit()
+                
+                DispatchQueue.main.async {
+                    if task.terminationStatus == 0 {
+                        print("✅ Successfully sent PDF to ChatGPT")
+                    } else {
+                        print("❌ Failed to send PDF to ChatGPT")
+                        // Fallback to simple file opening
+                        self.fallbackToChatGPT(fileURL: fileURL)
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    print("❌ Error running AppleScript: \(error)")
+                    self.fallbackToChatGPT(fileURL: fileURL)
+                }
+            }
+        }
+    }
+    
+    private func fallbackToChatGPT(fileURL: URL) {
+        print("⚠️ Falling back to simple ChatGPT opening")
+        
+        // Try to open the file directly with ChatGPT
+        NSWorkspace.shared.open([fileURL], withApplicationAt: URL(fileURLWithPath: "/Applications/ChatGPT.app"), configuration: NSWorkspace.OpenConfiguration())
+        print("✅ Attempted to open PDF with ChatGPT")
     }
 }
 

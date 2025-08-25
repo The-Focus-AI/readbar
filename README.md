@@ -8,6 +8,7 @@ A macOS menubar application that monitors your Downloads, Desktop, and iCloud re
 - **Smart filtering** - Only shows PDF and EPUB files
 - **Recent files priority** - Displays the 15 most recently modified files across all monitored directories
 - **One-click opening** - Click any file in the menu to open it with the default application
+- **ChatGPT integration** - Hold Option (⌥) and click any PDF or EPUB to send it to ChatGPT for analysis
 - **Lightweight** - Runs efficiently in the background as a menubar-only app
 - **Multi-directory support** - Monitors three key locations:
   - `~/Downloads`
@@ -41,7 +42,18 @@ swift readbar.swift --debug
 1. **Menubar Icon** - Look for the document icon in your menubar
 2. **Click the Icon** - Opens a dropdown showing your 15 most recent PDF/EPUB files
 3. **Select a File** - Click any file to open it with the default application
-4. **Quit** - Use the "Quit" option in the menu to exit
+4. **Send to ChatGPT** - Hold Option (⌥) and click any PDF or EPUB to send it to ChatGPT for analysis
+5. **Quit** - Use the "Quit" option in the menu to exit
+
+### ChatGPT Integration
+
+Readbar includes seamless integration with the ChatGPT native app:
+
+- **Option + Click** on any PDF or EPUB file
+- Automatically opens ChatGPT and creates a new chat
+- Uploads the selected file for analysis
+- Works with files containing spaces and special characters
+- Provides fallback options if the primary method fails
 
 ### Monitored Directories
 
@@ -58,6 +70,7 @@ Readbar automatically scans these directories for PDF and EPUB files:
 - macOS 10.15+ (Catalina or later)
 - Swift 5.0+
 - Xcode Command Line Tools (for Swift compilation)
+- ChatGPT native app (for ChatGPT integration feature)
 
 ### File Monitoring
 
@@ -137,6 +150,13 @@ MIT License - See LICENSE file for details
 Contributions welcome! Please feel free to submit issues, feature requests, or pull requests.
 
 ## Changelog
+
+### v1.1.0
+- Added ChatGPT integration
+- Option + Click to send PDF/EPUB files to ChatGPT for analysis
+- Automatic ChatGPT app activation and new chat creation
+- Support for files with spaces and special characters
+- Fallback mechanisms for robust operation
 
 ### v1.0.0
 - Initial release
